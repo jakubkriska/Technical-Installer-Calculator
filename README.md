@@ -1,7 +1,4 @@
-# Technical Installer Calculator (SecPro Demo)
-
-<!-- LIVE DEMO BADGE -->
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://jakubkriska.github.io/Technical-Installer-Calculator/)
+# Security Systems Field Calculator
 
 [**👉 Click here to open the Tool**](https://jakubkriska.github.io/Technical-Installer-Calculator/)
 
@@ -11,8 +8,7 @@ It demonstrates the ability to translate technical product data (Milesight CCTV 
 
 ## 📸 Preview
 
-![App Screenshot](screenshot.png)
-*(Note: Upload a screenshot of the app named 'screenshot.png' to your repository to see it here)*
+<img width="2694" height="1902" alt="image" src="https://github.com/user-attachments/assets/ef642a6d-9a0c-4348-8ac4-9b569a5e6563" />
 
 ## 🎯 Purpose
 
