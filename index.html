@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installer Calculator - CCTV & Power</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        secpro: {
+                            blue: '#0056b3',
+                            dark: '#1a202c',
+                            accent: '#e2e8f0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800 flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-secpro-blue text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                <i class="fas fa-tools"></i>
+                Technical Installer Calculator
+            </h1>
+            <p class="text-blue-100 text-sm mt-1 ml-8">Sales & Support Tool for SecPro Solutions</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-5xl flex-grow">
+        
+        <div class="grid md:grid-cols-2 gap-8">
+
+            <!-- Card 1: Video Storage & Bandwidth (Milesight Focus) -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+                <div class="bg-gray-800 text-white p-4 border-b border-gray-700">
+                    <h2 class="font-semibold text-lg flex items-center gap-2">
+                        <i class="fas fa-video text-blue-400"></i>
+                        Milesight Bandwidth & Storage
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Estimate for NVR Hard Drive (HDD) and Network Requirements</p>
+                </div>
+                <div class="p-6 space-y-5">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Number of Cameras</label>
+                            <input type="number" id="camCount" value="4" min="1" class="w-full p-2 bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" oninput="calculateCCTV()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Days (Recording)</label>
+                            <input type="number" id="days" value="30" min="1" class="w-full p-2 bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" oninput="calculateCCTV()">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Resolution & Codec (H.265)</label>
+                        <select id="camRes" class="w-full p-2 bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" onchange="calculateCCTV()">
+                            <option value="2">2 MP (1080p) - Low (approx. 2 Mbps)</option>
+                            <option value="4" selected>5 MP / 4 MP - Standard (approx. 4 Mbps)</option>
+                            <option value="8">8 MP (4K) - High (approx. 8 Mbps)</option>
+                            <option value="10">12 MP / Fisheye - Ultra (approx. 10 Mbps)</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <div class="flex justify-between items-center mb-2 pb-2 border-b border-blue-100">
+                            <span class="text-sm text-gray-600">Network Load:</span>
+                            <span class="font-bold text-blue-700 text-lg" id="resultBandwidth">0 Mbps</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">HDD Space Required:</span>
+                            <span class="font-bold text-blue-700 text-lg" id="resultStorage">0 TB</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 text-center">Based on continuous recording (24/7) with H.265+.</p>
+                </div>
+            </div>
+
+            <!-- Card 2: Battery Backup (Ajax/External Focus) -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+                <div class="bg-gray-800 text-white p-4 border-b border-gray-700">
+                    <h2 class="font-semibold text-lg flex items-center gap-2">
+                        <i class="fas fa-car-battery text-green-400"></i>
+                        External UPS / Backup
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Emergency Power Calculation for Router & NVR</p>
+                </div>
+                
+                <!-- Manual Reference Info Box -->
+                <div class="bg-blue-600 p-3 text-white text-sm flex gap-3 items-start">
+                    <i class="fas fa-info-circle mt-1"></i>
+                    <div>
+                        <span class="font-bold">Ajax Hub Info:</span>
+                        Hub (2G/4G) already has a <span class="underline">built-in</span> battery ensuring operation for up to 15 hours. (Ref: Manual p. 5).
+                    </div>
+                </div>
+
+                <div class="p-6 space-y-5">
+                    
+                    <!-- Pre-sets -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Select Equipment to Secure (UPS):</label>
+                        <div class="flex gap-2">
+                            <button onclick="setPower(12, 7)" class="flex-1 py-2 px-3 text-xs font-medium bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded transition flex flex-col items-center gap-1">
+                                <i class="fas fa-wifi text-gray-500"></i>
+                                <span>Router (12W)</span>
+                            </button>
+                            <button onclick="setPower(30, 18)" class="flex-1 py-2 px-3 text-xs font-medium bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded transition flex flex-col items-center gap-1">
+                                <i class="fas fa-server text-gray-500"></i>
+                                <span>NVR + HDD (30W)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Consumption (Watts)</label>
+                            <input type="number" id="watts" value="12" class="w-full p-2 bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" oninput="calculateBattery()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Battery (Ah @ 12V)</label>
+                            <input type="number" id="ampHours" value="7" class="w-full p-2 bg-gray-50 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" oninput="calculateBattery()">
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Estimated Runtime:</span>
+                            <span class="font-bold text-green-700 text-2xl" id="resultTime">0 h</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 border-t border-green-200 pt-2">
+                            <i class="fas fa-exclamation-triangle mr-1 text-yellow-500"></i>
+                            Remember: The router must have power for the Ethernet connection to work. Otherwise, the Ajax Hub switches to the SIM card.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-200 text-gray-600 py-6 mt-auto">
+        <div class="container mx-auto px-4 text-center text-xs">
+            <p class="mb-2">Developed as a demo project (Work Sample)</p>
+            <p>Data are indicative estimates based on standard H.265 compression and 12V DC systems.</p>
+        </div>
+    </footer>
+
+    <script>
+        // CCTV Calculator Logic
+        function calculateCCTV() {
+            const count = parseFloat(document.getElementById('camCount').value) || 0;
+            const bitrateMbps = parseFloat(document.getElementById('camRes').value) || 0; 
+            const days = parseFloat(document.getElementById('days').value) || 0;
+
+            const totalBandwidth = count * bitrateMbps;
+            
+            // Storage Calculation Logic (Approximate for H.265)
+            // MB/s = Mbps / 8
+            // GB/day = (MB/s * 3600 * 24) / 1024
+            // TB total = (GB/day * days) / 1024
+            
+            const mbPerSec = totalBandwidth / 8;
+            const gbPerDay = (mbPerSec * 86400) / 1024;
+            const totalTb = (gbPerDay * days) / 1024;
+
+            document.getElementById('resultBandwidth').innerText = totalBandwidth.toFixed(1) + " Mbps";
+            document.getElementById('resultStorage').innerText = totalTb.toFixed(2) + " TB";
+        }
+
+        // Battery Logic
+        function setPower(w, ah) {
+            document.getElementById('watts').value = w;
+            document.getElementById('ampHours').value = ah;
+            calculateBattery();
+        }
+
+        function calculateBattery() {
+            const watts = parseFloat(document.getElementById('watts').value) || 0;
+            const ah = parseFloat(document.getElementById('ampHours').value) || 0;
+            const volts = 12; 
+
+            if (watts <= 0) {
+                document.getElementById('resultTime').innerText = "0 h";
+                return;
+            }
+
+            // Watt-hours = Ah * V
+            const wattHours = ah * volts;
+            
+            // Efficiency factor (UPS conversion loss) set to 0.85
+            const efficiency = 0.85; 
+
+            // Time = (WattHours * Efficiency) / Load
+            const hours = (wattHours * efficiency) / watts;
+
+            // Formatting time
+            let timeString = hours.toFixed(1) + " h";
+            
+            if (hours > 24) {
+                 const days = (hours / 24).toFixed(1);
+                 timeString = days + " days (" + hours.toFixed(0) + "h)";
+            }
+
+            document.getElementById('resultTime').innerText = timeString;
+        }
+
+        // Init
+        calculateCCTV();
+        calculateBattery();
+    </script>
+</body>
+</html>
